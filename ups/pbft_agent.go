@@ -1081,7 +1081,6 @@ func (agent *PbftAgent) VerifyFastBlock(fb *types.Block, result bool) (*types.Pb
 		voteSign, _ := agent.GenerateSignWithVote(fb, types.VoteAgreeAgainst, result)
 		return voteSign, err
 	}
-	log.Info("IntermediateRoot", "Root", state.IntermediateRoot(true).String())
 	err = bc.Validator().ValidateState(fb, parent, state, receipts, usedGas)
 	if err != nil {
 		log.Error("verifyFastBlock validateState error", "Height:", fb.Number(), "err", err)

@@ -10,7 +10,7 @@ fi
 # Create fake Go workspace if it doesn't exist yet.
 workspace="$PWD/build/_workspace"
 root="$PWD"
-upsdir="$workspace/src/github.com/truechain"
+upsdir="$workspace/src/github.com/iceming123"
 if [ ! -L "$upsdir/ups" ]; then
     mkdir -p "$upsdir"
     cd "$upsdir"
