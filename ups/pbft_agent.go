@@ -944,6 +944,7 @@ func (agent *PbftAgent) FetchFastBlock(committeeID *big.Int, infos []*types.Comm
 		Number:     new(big.Int).Add(parentNumber, common.Big1),
 		GasLimit:   core.FastCalcGasLimit(parent, agent.gasFloor, agent.gasCeil),
 		Time:       big.NewInt(tstamp),
+		Reward: 	0,
 	}
 	//assign Proposer
 	pubKey, _ := crypto.UnmarshalPubkey(agent.committeeNode.Publickey)
@@ -958,6 +959,7 @@ func (agent *PbftAgent) FetchFastBlock(committeeID *big.Int, infos []*types.Comm
 	//if infos not nil ,indicate committee members  has changed,
 	// generate block without execute transaction
 	if infos != nil {
+		header.Reward = 1
 		header.Root = parent.Root()
 		fastBlock = types.NewBlock(header, nil, nil, nil, infos)
 	} else {
@@ -1079,6 +1081,7 @@ func (agent *PbftAgent) VerifyFastBlock(fb *types.Block, result bool) (*types.Pb
 		voteSign, _ := agent.GenerateSignWithVote(fb, types.VoteAgreeAgainst, result)
 		return voteSign, err
 	}
+	log.Info("IntermediateRoot", "Root", state.IntermediateRoot(true).String())
 	err = bc.Validator().ValidateState(fb, parent, state, receipts, usedGas)
 	if err != nil {
 		log.Error("verifyFastBlock validateState error", "Height:", fb.Number(), "err", err)

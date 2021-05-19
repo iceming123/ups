@@ -122,6 +122,7 @@ type Header struct {
 	Proposer      common.Address `json:"maker"            gencodec:"required"`
 	Bloom         Bloom          `json:"logsBloom"        gencodec:"required"`
 	Number        *big.Int       `json:"number"           gencodec:"required"`
+	Reward        byte       	 `json:"reward"           gencodec:"required"`
 	GasLimit      uint64         `json:"gasLimit"         gencodec:"required"`
 	GasUsed       uint64         `json:"gasUsed"          gencodec:"required"`
 	Time          *big.Int       `json:"timestamp"        gencodec:"required"`

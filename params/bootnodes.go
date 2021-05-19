@@ -39,7 +39,10 @@ var TestnetBootnodes = []string{
 // DevnetBootnodes are the enode URLs of the P2P bootstrap nodes running on
 // the dev Upschain network.
 var DevnetBootnodes = []string{
-	"enode://ec1e13e3d0177196a55570dfc1c810b2ea05109cb310c4dc7397ae6f3109467ec0d13a5f28ebdfb553511d492a4892ffa3a8283ce69bc5f93fce079dbfbfa5f4@39.100.120.25:30310",
+	"enode://916e53a45db10c880477453e5b10fb85856d9b8567faa3c4feb86dee67b8258e1b4deba78868e16471f2306de6d6f8faabf4f5bbd8d03c3689f63f718aeec2a6@127.0.0.1:30303",
+	"enode://9dea0cf01bca61577363f590e122ffb2df3d2079d46309dd9fb6ccf4587272112c068f6252d8c6496e76394ebe446b6f8b961bcff9c24e874cdc36ef93c64071@127.0.0.1:30304",
+	"enode://2e51ab6ea418959826f8e6389871a7b1692f85ad6717816c04cdf21851d56edc73ee562657d2989707afcc46e6010dccc394540a333e4ffb02095c7b8cc0a5c6@127.0.0.1:30305",
+	"enode://d2b54f53b42598930e864045352109081bee1a17b6de38b019c09af165e2883849b63fb731434c5dcf04b2de0321687d0036608d661b5be96807e4c9ccb574a9@127.0.0.1:30306",
 }
 
 // DiscoveryV5Bootnodes are the enode URLs of the P2P bootstrap nodes for the

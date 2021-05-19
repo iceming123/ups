@@ -125,7 +125,7 @@ func InitDPos(config *params.ChainConfig) {
 	params.FirstNewEpochID = common.Big1.Uint64()
 	params.DposForkPoint = 0
 }
-func makeImpawInitState(config *params.ChainConfig,state *state.StateDB) bool {
+func makeImpawInitState(state *state.StateDB) bool {
 	stateAddress := types.StakingAddress
 	key := common.BytesToHash(stateAddress[:])
 	obj := state.GetPOSState(stateAddress, key)
@@ -139,6 +139,6 @@ func makeImpawInitState(config *params.ChainConfig,state *state.StateDB) bool {
 	}			
 	return true
 }
-func OnceInitImpawnState(config *params.ChainConfig,state *state.StateDB) bool {
-	return makeImpawInitState(config,state)
+func OnceInitImpawnState(state *state.StateDB) bool {
+	return makeImpawInitState(state)
 }

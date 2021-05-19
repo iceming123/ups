@@ -163,8 +163,8 @@ func generateAddr() common.Address {
 
 func toFirstBlock(statedb *state.StateDB)  {
 	statedb.AddBalance(common.HexToAddress(addr1),balance1)
-	config := params.DevnetChainConfig
-	consensus.OnceInitImpawnState(config,statedb)
+	//config := params.DevnetChainConfig
+	consensus.OnceInitImpawnState(statedb)
 	root = statedb.IntermediateRoot(false)
 	statedb.Commit(false)
 	statedb.Database().TrieDB().Commit(root, true)
@@ -489,7 +489,7 @@ func TestRedeem(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	if err := impl.Shift(1,0); err != nil  {
+	if err := impl.Shift(1); err != nil  {
 		fmt.Println("shift error:",err)
 	}
 	

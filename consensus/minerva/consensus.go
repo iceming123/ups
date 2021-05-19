@@ -302,11 +302,19 @@ func (m *Minerva) Prepare(chain consensus.ChainReader, header *types.Header) err
 func (m *Minerva) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB,
 	txs []*types.Transaction, receipts []*types.Receipt, feeAmount *big.Int) (*types.Block, *types.ChainReward,error) {
 
-	infos,err := accumulateRewardsFast(state, header.Number.Uint64(),header.Time.Uint64())
-	if err != nil {
-		log.Error("Finalize Error", "accumulateRewardsFast", err.Error())
-		return nil,nil, err
+	if header.Number.Uint64() == 1 {
+		consensus.OnceInitImpawnState(state)
 	}
+	var infos *types.ChainReward
+	var err error
+	if header.Reward == 0 {
+		infos,err = accumulateRewardsFast(state, header.Number.Uint64(),header.Time.Uint64())
+		if err != nil {
+			log.Error("Finalize Error", "accumulateRewardsFast", err.Error())
+			return nil,nil, err
+		}
+	}
+
 	if err := m.finalizeFastGas(state, header.Number, header.Hash(), feeAmount); err != nil {
 		return nil,nil, err
 	}
@@ -393,6 +401,7 @@ func LogPrint(info string, addr common.Address, amount *big.Int) {
 }
 
 func accumulateRewardsFast(stateDB *state.StateDB, fast,btime uint64) (*types.ChainReward,error) {
+	return nil,nil
 	committeeCoin := GetBlockReward(fast)
 	
 	impawn := vm.NewImpawnImpl()
