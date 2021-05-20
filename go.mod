@@ -30,7 +30,7 @@ require (
 	github.com/jackpal/go-nat-pmp v1.0.2
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/karalabe/hid v1.0.0
-	github.com/loinfish/azure-storage-go v0.0.1 // indirect
+	github.com/loinfish/azure-storage-go v0.0.1
 	github.com/loinfish/ed25519 v0.0.1
 	github.com/maruel/panicparse v0.0.0-20160720141634-ad661195ed0e // indirect
 	github.com/maruel/ut v1.0.2 // indirect
