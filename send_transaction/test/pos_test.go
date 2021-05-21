@@ -92,7 +92,7 @@ func TestDeposit(t *testing.T) {
 		sendWithdrawDelegateTransaction(number-types.MinCalcRedeemHeight(2)-10, gen, daddr1, saddr1, big.NewInt(1000000000000000000), dkey1, signer, statedb, blockchain, abiStaking, nil)
 	}
 	manager := newTestPOSManager(55, executable)
-	fmt.Println(" saddr1 ", types.ToTrue(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToTrue(manager.GetBalance(types.StakingAddress)))
+	fmt.Println(" saddr1 ", types.ToUps(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToUps(manager.GetBalance(types.StakingAddress)))
 }
 
 func TestDepositGetDeposit(t *testing.T) {
@@ -131,7 +131,7 @@ func TestDepositGetDeposit(t *testing.T) {
 		sendGetDelegateTransaction(number-types.MinCalcRedeemHeight(2)-21, gen, daddr1, saddr1, dkey1, signer, statedb, blockchain, abiStaking, nil)
 	}
 	manager := newTestPOSManager(101, executable)
-	fmt.Println(" saddr1 ", types.ToTrue(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToTrue(manager.GetBalance(types.StakingAddress)))
+	fmt.Println(" saddr1 ", types.ToUps(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToUps(manager.GetBalance(types.StakingAddress)))
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -217,7 +217,7 @@ func TestDelegateRewardNextEpochValid(t *testing.T) {
 		sendGetDelegateTransaction(number-types.MinCalcRedeemHeight(3)-21, gen, daddr1, saddr1, dkey1, signer, statedb, blockchain, abiStaking, nil)
 	}
 	manager := newTestPOSManager(101, executable)
-	fmt.Println(" saddr1 ", types.ToTrue(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToTrue(manager.GetBalance(types.StakingAddress)))
+	fmt.Println(" saddr1 ", types.ToUps(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToUps(manager.GetBalance(types.StakingAddress)))
 }
 
 func TestDelegateCancleInUnSelectValidator(t *testing.T) {
@@ -246,5 +246,5 @@ func TestDelegateCancleInUnSelectValidator(t *testing.T) {
 		sendGetDelegateTransaction(number-types.MinCalcRedeemHeight(2)-21, gen, daddr1, saddr1, dkey1, signer, statedb, blockchain, abiStaking, nil)
 	}
 	manager := newTestPOSManager(101, executable)
-	fmt.Println(" saddr1 ", types.ToTrue(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToTrue(manager.GetBalance(types.StakingAddress)))
+	fmt.Println(" saddr1 ", types.ToUps(manager.GetBalance(saddr1)), " StakingAddress ", manager.GetBalance(types.StakingAddress), " ", types.ToUps(manager.GetBalance(types.StakingAddress)))
 }

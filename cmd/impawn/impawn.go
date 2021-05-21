@@ -127,7 +127,7 @@ func sendContractTransaction(client *upsclient.Client, from, toAddress common.Ad
 
 	gasLimit := uint64(2100000) // in units
 	// If the contract surely has code (or code is not needed), estimate the transaction
-	msg := truechain.CallMsg{From: from, To: &toAddress, GasPrice: gasPrice, Value: value, Data: input}
+	msg := upschain.CallMsg{From: from, To: &toAddress, GasPrice: gasPrice, Value: value, Data: input}
 	gasLimit, err = client.EstimateGas(context.Background(), msg)
 	if err != nil {
 		fmt.Println("Contract exec failed", err)
@@ -323,7 +323,7 @@ func PrintBalance(conn *upsclient.Client, from common.Address) {
 	trueValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
 
 	sbalance, err := conn.LockBalanceAt(context.Background(), from, nil)
-	fmt.Println("Your wallet valid balance is ", trueValue, "'true ", " lock balance is ", types.ToTrue(sbalance), "'true ")
+	fmt.Println("Your wallet valid balance is ", trueValue, "'true ", " lock balance is ", types.ToUps(sbalance), "'true ")
 }
 
 func loadPrivate(ctx *cli.Context) {
@@ -414,7 +414,7 @@ func queryStakingInfo(conn *upsclient.Client, query bool, delegate bool) {
 	} else {
 		input = packInput("getDeposit", from)
 	}
-	msg := truechain.CallMsg{From: from, To: &types.StakingAddress, Data: input}
+	msg := upschain.CallMsg{From: from, To: &types.StakingAddress, Data: input}
 	output, err := conn.CallContract(context.Background(), msg, header.Number)
 	if err != nil {
 		printError("method CallContract error", err)

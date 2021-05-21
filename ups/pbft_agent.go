@@ -1224,7 +1224,7 @@ func (env *AgentWork) commitTransactions(mux *event.TypeMux, txs *types.Transact
 
 func (env *AgentWork) commitTransaction(tx *types.Transaction, bc *core.BlockChain, gp *core.GasPool, feeAmount *big.Int) ([]*types.Log, error) {
 	snap := env.state.Snapshot()
-	receipt, _, err := core.ApplyTransaction(env.config, bc, gp, env.state, env.header, tx, &env.header.GasUsed, feeAmount, vm.Config{})
+	receipt, err := core.ApplyTransaction(env.config, bc, gp, env.state, env.header, tx, &env.header.GasUsed, feeAmount, vm.Config{})
 	if err != nil {
 		env.state.RevertToSnapshot(snap)
 		return nil, err

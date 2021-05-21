@@ -23,7 +23,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/golang/snappy v0.0.3
 	github.com/hashicorp/golang-lru v0.5.4
-	github.com/holiman/uint256 v1.1.1 // indirect
+	github.com/holiman/uint256 v1.1.1
 	github.com/howeyc/fsnotify v0.9.0 // indirect
 	github.com/huin/goupnp v1.0.0
 	github.com/influxdata/influxdb v1.8.5

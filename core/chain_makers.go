@@ -97,7 +97,7 @@ func (b *BlockGen) AddTxWithChain(bc *BlockChain, tx *types.Transaction) {
 	}
 	b.statedb.Prepare(tx.Hash(), b.header.Hash(), len(b.txs))
 
-	receipt, _, err := ApplyTransaction(b.config, bc, b.gasPool, b.statedb, b.header, tx, &b.header.GasUsed, b.feeAmout, vm.Config{})
+	receipt, err := ApplyTransaction(b.config, bc, b.gasPool, b.statedb, b.header, tx, &b.header.GasUsed, b.feeAmout, vm.Config{})
 	if err != nil {
 		panic(err)
 	}

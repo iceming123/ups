@@ -24,7 +24,7 @@ import (
 	"github.com/iceming123/ups/common"
 	"github.com/iceming123/ups/common/hexutil"
 	"github.com/iceming123/ups/log"
-	truechain "github.com/iceming123/ups"
+	upschain "github.com/iceming123/ups"
 	"github.com/iceming123/ups/accounts"
 	"github.com/iceming123/ups/core/types"
 	"github.com/iceming123/ups/event"
@@ -143,7 +143,7 @@ func (api *ExternalSigner) Derive(path accounts.DerivationPath, pin bool) (accou
 	return accounts.Account{}, fmt.Errorf("operation not supported on external signers")
 }
 
-func (api *ExternalSigner) SelfDerive(bases []accounts.DerivationPath, chain truechain.ChainStateReader) {
+func (api *ExternalSigner) SelfDerive(bases []accounts.DerivationPath, chain upschain.ChainStateReader) {
 	log.Error("operation SelfDerive not supported on external signers")
 }
 

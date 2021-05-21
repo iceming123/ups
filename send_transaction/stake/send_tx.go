@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	truechain "github.com/iceming123/ups"
+	upschain "github.com/iceming123/ups"
 	"github.com/iceming123/ups/accounts/abi"
 	"github.com/iceming123/ups/accounts/keystore"
 	"github.com/iceming123/ups/cmd/utils"
@@ -477,7 +477,7 @@ func sendContractTransaction(client *upsclient.Client, from, toAddress common.Ad
 	if types.StakingAddress == toAddress {
 		if strings.Contains("withdrawImpawn", method) {
 			// If the contract surely has code (or code is not needed), estimate the transaction
-			msg := truechain.CallMsg{From: from, To: &toAddress, GasPrice: gasPrice, Value: value, Data: input}
+			msg := upschain.CallMsg{From: from, To: &toAddress, GasPrice: gasPrice, Value: value, Data: input}
 			limit, err := client.EstimateGas(context.Background(), msg)
 			if err != nil {
 				fmt.Println("withdrawImpawn err ", err)
@@ -730,7 +730,7 @@ func PrintBalance(conn *upsclient.Client, from common.Address) {
 	trueValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
 
 	sbalance, err := conn.BalanceAt(context.Background(), types.StakingAddress, nil)
-	fmt.Println("Your wallet balance is ", trueValue, "'true ", " current Total Stake ", types.ToTrue(sbalance))
+	fmt.Println("Your wallet balance is ", trueValue, "'true ", " current Total Stake ", types.ToUps(sbalance))
 }
 
 func loadPrivate(ctx *cli.Context) {
@@ -836,7 +836,7 @@ func queryStakingInfo(conn *upsclient.Client, query bool, delegate bool) (uint64
 
 	input = packInput("getDeposit", from)
 
-	msg := truechain.CallMsg{From: from, To: &types.StakingAddress, Data: input}
+	msg := upschain.CallMsg{From: from, To: &types.StakingAddress, Data: input}
 	output, err := conn.CallContract(context.Background(), msg, header.Number)
 	if err != nil {
 		printError("method CallContract error", err)
@@ -884,7 +884,7 @@ func queryDelegateInfo(conn *upsclient.Client, daAddress common.Address) (uint64
 		log.Fatal(err)
 	}
 	input := packInput("getDelegate", daAddress, from)
-	msg := truechain.CallMsg{From: daAddress, To: &types.StakingAddress, Data: input}
+	msg := upschain.CallMsg{From: daAddress, To: &types.StakingAddress, Data: input}
 	output, err := conn.CallContract(context.Background(), msg, header.Number)
 	if err != nil {
 		printError("method CallContract error", err)

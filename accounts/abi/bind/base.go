@@ -20,9 +20,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/iceming123/ups/params"
 	"math/big"
 
-	truechain "github.com/iceming123/ups"
+	upschain "github.com/iceming123/ups"
 	"github.com/iceming123/ups/accounts/abi"
 	"github.com/iceming123/ups/common"
 	"github.com/iceming123/ups/core/types"
@@ -49,7 +50,7 @@ type TransactOpts struct {
 	Nonce  *big.Int       // Nonce to use for the transaction execution (nil = use pending state)
 	Signer SignerFn       // Method to use for signing the transaction (mandatory)
 
-	Value    *big.Int // Funds to transfer along along the transaction (nil = 0 = no funds)
+	Value    *big.Int // Funds to transfer along the transaction (nil = 0 = no funds)
 	GasPrice *big.Int // Gas price to use for the transaction execution (nil = gas price oracle)
 	GasLimit uint64   // Gas limit to set for the transaction execution (0 = estimate)
 
@@ -128,7 +129,7 @@ func (c *BoundContract) Call(opts *CallOpts, result interface{}, method string, 
 		return err
 	}
 	var (
-		msg    = truechain.CallMsg{From: opts.From, To: &c.address, Data: input}
+		msg    = upschain.CallMsg{From: opts.From, To: &c.address, Data: input}
 		ctx    = ensureContext(opts.Context)
 		code   []byte
 		output []byte
@@ -171,12 +172,24 @@ func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...in
 	if err != nil {
 		return nil, err
 	}
+	// todo(rjl493456442) check the method is payable or not,
+	// reject invalid transaction at the first place
 	return c.transact(opts, &c.address, input)
+}
+
+// RawTransact initiates a transaction with the given raw calldata as the input.
+// It's usually used to initiates transaction for invoking **Fallback** function.
+func (c *BoundContract) RawTransact(opts *TransactOpts, calldata []byte) (*types.Transaction, error) {
+	// todo(rjl493456442) check the method is payable or not,
+	// reject invalid transaction at the first place
+	return c.transact(opts, &c.address, calldata)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
 func (c *BoundContract) Transfer(opts *TransactOpts) (*types.Transaction, error) {
+	// todo(rjl493456442) check the payable fallback or receive is defined
+	// or not, reject invalid transaction at the first place
 	return c.transact(opts, &c.address, nil)
 }
 
@@ -218,7 +231,7 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 			}
 		}
 		// If the contract surely has code (or code is not needed), estimate the transaction
-		msg := truechain.CallMsg{From: opts.From, To: contract, GasPrice: gasPrice, Value: value, Data: input}
+		msg := upschain.CallMsg{From: opts.From, To: contract, GasPrice: gasPrice, Value: value, Data: input}
 		gasLimit, err = c.transactor.EstimateGas(ensureContext(opts.Context), msg)
 		if err != nil {
 			return nil, fmt.Errorf("failed to estimate gas needed: %v", err)
@@ -252,16 +265,16 @@ func (c *BoundContract) FilterLogs(opts *FilterOpts, name string, query ...[]int
 		opts = new(FilterOpts)
 	}
 	// Append the event selector to the query parameters and construct the topic set
-	query = append([][]interface{}{{c.abi.Events[name].ID()}}, query...)
+	query = append([][]interface{}{{c.abi.Events[name].ID}}, query...)
 
-	topics, err := makeTopics(query...)
+	topics, err := abi.MakeTopics(query...)
 	if err != nil {
 		return nil, nil, err
 	}
 	// Start the background filtering
 	logs := make(chan types.Log, 128)
 
-	config := truechain.FilterQuery{
+	config := upschain.FilterQuery{
 		Addresses: []common.Address{c.address},
 		Topics:    topics,
 		FromBlock: new(big.Int).SetUint64(opts.Start),
@@ -301,16 +314,16 @@ func (c *BoundContract) WatchLogs(opts *WatchOpts, name string, query ...[]inter
 		opts = new(WatchOpts)
 	}
 	// Append the event selector to the query parameters and construct the topic set
-	query = append([][]interface{}{{c.abi.Events[name].ID()}}, query...)
+	query = append([][]interface{}{{c.abi.Events[name].ID}}, query...)
 
-	topics, err := makeTopics(query...)
+	topics, err := abi.MakeTopics(query...)
 	if err != nil {
 		return nil, nil, err
 	}
 	// Start the background filtering
 	logs := make(chan types.Log, 128)
 
-	config := truechain.FilterQuery{
+	config := upschain.FilterQuery{
 		Addresses: []common.Address{c.address},
 		Topics:    topics,
 	}
@@ -337,7 +350,7 @@ func (c *BoundContract) UnpackLog(out interface{}, event string, log types.Log) 
 			indexed = append(indexed, arg)
 		}
 	}
-	return parseTopics(out, indexed, log.Topics[1:])
+	return abi.ParseTopics(out, indexed, log.Topics[1:])
 }
 
 // UnpackLogIntoMap unpacks a retrieved log into the provided map.
@@ -353,7 +366,7 @@ func (c *BoundContract) UnpackLogIntoMap(out map[string]interface{}, event strin
 			indexed = append(indexed, arg)
 		}
 	}
-	return parseTopicsIntoMap(out, indexed, log.Topics[1:])
+	return abi.ParseTopicsIntoMap(out, indexed, log.Topics[1:])
 }
 
 // ensureContext is a helper method to ensure a context is not nil, even if the

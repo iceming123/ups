@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package types contains data types related to truechain consensus.
+// Package types contains data types related to upschain consensus.
 package types
 
 import (
@@ -173,7 +173,7 @@ type BlockReward struct {
 	FastNumber  *big.Int    `json:"FastNumber"      gencodec:"required"`
 }
 
-// Block represents an entire block in the truechain blockchain.
+// Block represents an entire block in the upschain blockchain.
 type Block struct {
 	header       *Header
 	transactions Transactions
@@ -291,7 +291,7 @@ type extblock struct {
 	Infos  []*CommitteeMember
 }
 
-// DecodeRLP decodes the truechain
+// DecodeRLP decodes the upschain
 func (b *Block) DecodeRLP(s *rlp.Stream) error {
 	var eb extblock
 	_, size, _ := s.Kind()
@@ -303,7 +303,7 @@ func (b *Block) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-// EncodeRLP serializes b into the truechain RLP block format.
+// EncodeRLP serializes b into the upschain RLP block format.
 func (b *Block) EncodeRLP(w io.Writer) error {
 	return rlp.Encode(w, extblock{
 		Header: b.header,

@@ -1031,7 +1031,7 @@ func getPks(n int) [][]byte {
 	return res
 }
 func print_reward(impawn *ImpawnImpl,b,e,effectid uint64,rewardAmount *big.Int) {
-	fmt.Println("reward [",b,e,types.ToTrue(rewardAmount).Text('f',8),"]")
+	fmt.Println("reward [",b,e,types.ToUps(rewardAmount).Text('f',8),"]")
 	res,err2 := impawn.Reward(e,rewardAmount)
 	if err2 != nil {
 		fmt.Println("Reward:",err2)

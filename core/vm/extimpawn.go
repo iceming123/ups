@@ -34,7 +34,7 @@ func (i *ImpawnImpl) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-// EncodeRLP serializes b into the truechain RLP ImpawnImpl format.
+// EncodeRLP serializes b into the upschain RLP ImpawnImpl format.
 func (i *ImpawnImpl) EncodeRLP(w io.Writer) error {
 	var accounts []SAImpawns
 	var order []uint64

@@ -1,4 +1,4 @@
-package truechain
+package upschain
 
 import (
 	"context"

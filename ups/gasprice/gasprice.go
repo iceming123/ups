@@ -24,12 +24,11 @@ import (
 
 	"github.com/iceming123/ups/common"
 	"github.com/iceming123/ups/core/types"
-	"github.com/iceming123/ups/internal/upsapi"
 	"github.com/iceming123/ups/params"
 	"github.com/iceming123/ups/rpc"
 )
 
-var maxPrice = big.NewInt(500 * params.Shannon)
+var maxPrice = big.NewInt(1000 * params.Shannon)
 
 type Config struct {
 	Blocks     int
@@ -40,18 +39,26 @@ type Config struct {
 // Oracle recommends gas prices based on the content of recent
 // blocks. Suitable for both light and full clients.
 type Oracle struct {
-	backend   upsapi.Backend
-	lastHead  common.Hash
-	lastPrice *big.Int
-	cacheLock sync.RWMutex
-	fetchLock sync.Mutex
+	backend      OracleBackend
+	lastHead     common.Hash
+	lastPrice    *big.Int
+	defaultPrice *big.Int
+	cacheLock    sync.RWMutex
+	fetchLock    sync.Mutex
 
 	checkBlocks, maxEmpty, maxBlocks int
 	percentile                       int
 }
 
+// OracleBackend includes all necessary background APIs for oracle.
+type OracleBackend interface {
+	HeaderByNumber(ctx context.Context, number rpc.BlockNumber) (*types.Header, error)
+	BlockByNumber(ctx context.Context, number rpc.BlockNumber) (*types.Block, error)
+	ChainConfig() *params.ChainConfig
+}
+
 // NewOracle returns a new oracle.
-func NewOracle(backend upsapi.Backend, params Config) *Oracle {
+func NewOracle(backend OracleBackend, params Config) *Oracle {
 	blocks := params.Blocks
 	if blocks < 1 {
 		blocks = 1
@@ -64,12 +71,13 @@ func NewOracle(backend upsapi.Backend, params Config) *Oracle {
 		percent = 100
 	}
 	return &Oracle{
-		backend:     backend,
-		lastPrice:   params.Default,
-		checkBlocks: blocks,
-		maxEmpty:    blocks / 2,
-		maxBlocks:   blocks * 5,
-		percentile:  percent,
+		backend:      backend,
+		lastPrice:    params.Default,
+		defaultPrice: params.Default,
+		checkBlocks:  blocks,
+		maxEmpty:     blocks / 2,
+		maxBlocks:    blocks * 5,
+		percentile:   percent,
 	}
 }
 
@@ -134,10 +142,15 @@ func (gpo *Oracle) SuggestPrice(ctx context.Context) (*big.Int, error) {
 	price := lastPrice
 	if len(blockPrices) > 0 {
 		sort.Sort(bigIntArray(blockPrices))
-		price = blockPrices[(len(blockPrices)-1)*gpo.percentile/100]
+		num := (len(blockPrices) - 1) * gpo.percentile / 100
+		price = blockPrices[num]
 	}
 	if price.Cmp(maxPrice) > 0 {
 		price = new(big.Int).Set(maxPrice)
+	}
+
+	if price.Cmp(gpo.defaultPrice) < 0 {
+		price = new(big.Int).Set(gpo.defaultPrice)
 	}
 
 	gpo.cacheLock.Lock()

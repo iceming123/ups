@@ -51,14 +51,15 @@ func init() {
 	abiStaking, _ = abi.JSON(strings.NewReader(StakeABIJSON))
 }
 
-// RunStaking execute truechain staking contract
+// RunStaking execute upschain staking contract
 func RunStaking(evm *EVM, contract *Contract, input []byte) (ret []byte, err error) {
 	var method *abi.Method
 
-	method, err = abiStaking.MethodById(input)
+  method, err = abiStaking.MethodById(input)
+
 	if err != nil {
 		log.Error("No method found")
-		return nil, errExecutionReverted
+		return nil, ErrExecutionReverted
 	}
 
 	data := input[4:]
@@ -95,13 +96,17 @@ func RunStaking(evm *EVM, contract *Contract, input []byte) (ret []byte, err err
 
 	if err != nil {
 		log.Warn("Staking error code", "code", err)
-		err = errExecutionReverted
+		err = ErrExecutionReverted
 	}
 
 	return ret, err
 }
 
 func addLockedBalance(db StateDB, addr common.Address, amount *big.Int) {
+	db.SetPOSLocked(addr, new(big.Int).Add(db.GetPOSLocked(addr), amount))
+}
+
+func GenesisAddLockedBalance(db StateDB, addr common.Address, amount *big.Int) {
 	db.SetPOSLocked(addr, new(big.Int).Add(db.GetPOSLocked(addr), amount))
 }
 
@@ -174,7 +179,7 @@ func deposit(evm *EVM, contract *Contract, input []byte) (ret []byte, err error)
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -231,7 +236,7 @@ func depositAppend(evm *EVM, contract *Contract, input []byte) (ret []byte, err 
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -277,7 +282,7 @@ func setFeeRate(evm *EVM, contract *Contract, input []byte) (ret []byte, err err
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -323,7 +328,7 @@ func setPubkey(evm *EVM, contract *Contract, input []byte) (ret []byte, err erro
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -379,7 +384,7 @@ func delegate(evm *EVM, contract *Contract, input []byte) (ret []byte, err error
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 		common.BytesToHash(args.Holder[:]),
 	}
@@ -436,7 +441,7 @@ func undelegate(evm *EVM, contract *Contract, input []byte) (ret []byte, err err
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 		common.BytesToHash(args.Holder[:]),
 	}
@@ -482,7 +487,7 @@ func cancel(evm *EVM, contract *Contract, input []byte) (ret []byte, err error) 
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -534,7 +539,7 @@ func withdraw(evm *EVM, contract *Contract, input []byte) (ret []byte, err error
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 	}
 	logN(evm, contract, topics, logData)
@@ -588,7 +593,7 @@ func withdrawDelegate(evm *EVM, contract *Contract, input []byte) (ret []byte, e
 		return nil, err
 	}
 	topics := []common.Hash{
-		event.ID(),
+		event.ID,
 		common.BytesToHash(from[:]),
 		common.BytesToHash(args.Holder[:]),
 	}

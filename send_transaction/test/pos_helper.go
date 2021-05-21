@@ -429,7 +429,7 @@ func printBalance(stateDb *state.StateDB, from common.Address, method string) {
 	fbalance.SetString(balance.String())
 	StakinValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
 
-	printTest(method, " from ", types.ToTrue(stateDb.GetBalance(from)), " Staking fbalance ", fbalance, " StakinValue ", StakinValue, "from ", from.String())
+	printTest(method, " from ", types.ToUps(stateDb.GetBalance(from)), " Staking fbalance ", fbalance, " StakinValue ", StakinValue, "from ", from.String())
 }
 
 func packInput(abiStaking abi.ABI, abiMethod, method string, params ...interface{}) []byte {

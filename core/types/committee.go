@@ -67,8 +67,8 @@ const (
 type CommitteeMembers []*CommitteeMember
 
 type CommitteeMember struct {
-	Coinbase      common.Address
-	CommitteeBase common.Address
+	Coinbase      common.Address		`json:"coinbase`
+	CommitteeBase common.Address		`json:"committeebase`
 	Publickey     []byte
 	Flag          uint32
 	MType         uint32
@@ -196,7 +196,7 @@ type extPbftSign struct {
 	Sign       []byte      //sign msg
 }
 
-// DecodeRLP decodes the truechain
+// DecodeRLP decodes the upschain
 func (c *PbftSign) DecodeRLP(s *rlp.Stream) error {
 	var ep extPbftSign
 	_, size, _ := s.Kind()
@@ -208,7 +208,7 @@ func (c *PbftSign) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-// EncodeRLP serializes b into the truechain RLP block format.
+// EncodeRLP serializes b into the upschain RLP block format.
 func (p *PbftSign) EncodeRLP(w io.Writer) error {
 	return rlp.Encode(w, extPbftSign{
 		FastHeight: p.FastHeight,
@@ -321,7 +321,7 @@ type extEncryptNode struct {
 	Sign        //sign msg
 }
 
-// DecodeRLP decodes the truechain
+// DecodeRLP decodes the upschain
 func (c *EncryptNodeMessage) DecodeRLP(s *rlp.Stream) error {
 	var ee extEncryptNode
 	_, size, _ := s.Kind()
@@ -333,7 +333,7 @@ func (c *EncryptNodeMessage) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-// EncodeRLP serializes b into the truechain RLP block format.
+// EncodeRLP serializes b into the upschain RLP block format.
 func (c *EncryptNodeMessage) EncodeRLP(w io.Writer) error {
 	return rlp.Encode(w, extEncryptNode{
 		CreatedAt:   c.CreatedAt,

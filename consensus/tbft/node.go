@@ -314,7 +314,7 @@ func (s *service) EventBus() *ttypes.EventBus {
 
 //------------------------------------------------------------------------------
 
-// Node is the highest level interface to a full truechain node.
+// Node is the highest level interface to a full upschain node.
 // It includes all configuration information and running services.
 type Node struct {
 	help.BaseService
@@ -332,7 +332,7 @@ type Node struct {
 	servicePre uint64
 }
 
-// NewNode returns a new, ready to go, truechain Node.
+// NewNode returns a new, ready to go, upschain Node.
 func NewNode(config *cfg.TbftConfig, chainID string, priv *ecdsa.PrivateKey,
 	agent types.PbftAgentProxy) (*Node, error) {
 

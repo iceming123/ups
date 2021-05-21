@@ -101,7 +101,7 @@ func (api *PublicFilterAPI) timeoutLoop() {
 // It is part of the filter package because this filter can be used through the
 // `ups_getFilterChanges` polling method that is also used for log filters.
 //
-// https://github.com/truechain/wiki/wiki/JSON-RPC#ups_newpendingtransactionfilter
+// https://github.com/upschain/wiki/wiki/JSON-RPC#ups_newpendingtransactionfilter
 func (api *PublicFilterAPI) NewPendingTransactionFilter() rpc.ID {
 	var (
 		pendingTxs   = make(chan []common.Hash)
@@ -245,7 +245,7 @@ func (api *PublicFilterAPI) Logs(ctx context.Context, crit FilterCriteria) (*rpc
 		matchedLogs = make(chan []*types.Log)
 	)
 
-	logsSub, err := api.events.SubscribeLogs(truechain.FilterQuery(crit), matchedLogs)
+	logsSub, err := api.events.SubscribeLogs(upschain.FilterQuery(crit), matchedLogs)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +273,7 @@ func (api *PublicFilterAPI) Logs(ctx context.Context, crit FilterCriteria) (*rpc
 
 // FilterCriteria represents a request to create a new filter.
 // Same as ethereum.FilterQuery but with UnmarshalJSON() method.
-type FilterCriteria truechain.FilterQuery
+type FilterCriteria upschain.FilterQuery
 
 // NewFilter creates a new filter and returns the filter id. It can be
 // used to retrieve logs when the state changes. This method cannot be
@@ -290,7 +290,7 @@ type FilterCriteria truechain.FilterQuery
 // https://github.com/ethereum/wiki/wiki/JSON-RPC#ups_newfilter
 func (api *PublicFilterAPI) NewFilter(crit FilterCriteria) (rpc.ID, error) {
 	logs := make(chan []*types.Log)
-	logsSub, err := api.events.SubscribeLogs(truechain.FilterQuery(crit), logs)
+	logsSub, err := api.events.SubscribeLogs(upschain.FilterQuery(crit), logs)
 	if err != nil {
 		return rpc.ID(""), err
 	}

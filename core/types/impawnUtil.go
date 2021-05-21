@@ -109,7 +109,7 @@ func (e *RewardInfo) clone() *RewardInfo {
 	}
 }
 func (e *RewardInfo) String() string {
-	return fmt.Sprintf("[Address:%v,Amount:%s\n]", e.Address.String(), ToTrue(e.Amount).Text('f', 8))
+	return fmt.Sprintf("[Address:%v,Amount:%s\n]", e.Address.String(), ToUps(e.Amount).Text('f', 8))
 }
 func FetchOne(sas []*SARewardInfos, addr common.Address) []*RewardInfo {
 	items := make([]*RewardInfo, 0, 0)
@@ -312,7 +312,7 @@ func toReward(val *big.Float) *big.Int {
 	ii, _ := val.Int64()
 	return big.NewInt(ii)
 }
-func ToTrue(val *big.Int) *big.Float {
+func ToUps(val *big.Int) *big.Float {
 	return new(big.Float).Quo(new(big.Float).SetInt(val), fbaseUnit)
 }
 func GetFirstEpoch() *EpochIDInfo {

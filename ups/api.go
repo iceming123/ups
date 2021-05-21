@@ -76,7 +76,7 @@ func (api *PublicTruechainAPI) GetCurrentState() map[string]interface{} {
 	return api.e.agent.GetCommitteeStatus()
 }
 
-// ChainId retuurn current truechain's chain config.
+// ChainId retuurn current upschain's chain config.
 func (api *PublicTruechainAPI) ChainId() hexutil.Uint64 {
 	chainID := new(big.Int)
 	chainID = api.e.blockchain.Config().ChainID
