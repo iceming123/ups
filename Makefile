@@ -38,7 +38,7 @@ all:
 # ios:
 #	build/env.sh go run build/ci.go xcode --local
 #	@echo "Done building."
-#	@echo "Import \"$(GOBIN)/Getrue.framework\" to use the library."
+#	@echo "Import \"$(GOBIN)/Gups.framework\" to use the library."
 
 test: all
 	build/env.sh go run build/ci.go test

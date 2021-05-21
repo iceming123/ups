@@ -656,7 +656,7 @@ func doWindowsInstaller(cmdline []string) {
 	// first section contains the gups binary, second section holds the dev tools.
 	templateData := map[string]interface{}{
 		"License":  "COPYING",
-		"Getrue":   gethTool,
+		"Gups":   gethTool,
 		"DevTools": devTools,
 	}
 	build.Render("build/nsis.gups.nsi", filepath.Join(*workdir, "gups.nsi"), 0644, nil)
@@ -864,8 +864,8 @@ func doXCodeFramework(cmdline []string) {
 	// Prepare and upload a PodSpec to CocoaPods
 	if *deploy != "" {
 		meta := newPodMetadata(env, archive)
-		build.Render("build/pod.podspec", "Getrue.podspec", 0755, meta)
-		build.MustRunCommand("pod", *deploy, "push", "Getrue.podspec", "--allow-warnings", "--verbose")
+		build.Render("build/pod.podspec", "Gups.podspec", 0755, meta)
+		build.MustRunCommand("pod", *deploy, "push", "Gups.podspec", "--allow-warnings", "--verbose")
 	}
 }
 

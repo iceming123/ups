@@ -130,7 +130,7 @@ var (
 )
 
 func init() {
-	// Initialize the CLI app and start Getrue
+	// Initialize the CLI app and start Gups
 	app.Action = gups
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018-2019 The gups Authors"

@@ -15,14 +15,14 @@ As the dashboard depends on certain NPM packages (which are not included in the 
 $ (cd dashboard/assets && yarn install && yarn flow)
 ```
 
-Normally the dashboard assets are bundled into Getrue via `go-bindata` to avoid external dependencies. Rebuilding Getrue after each UI modification however is not feasible from a developer perspective. Instead, we can run `yarn dev` to watch for file system changes and refresh the browser automatically.
+Normally the dashboard assets are bundled into Gups via `go-bindata` to avoid external dependencies. Rebuilding Gups after each UI modification however is not feasible from a developer perspective. Instead, we can run `yarn dev` to watch for file system changes and refresh the browser automatically.
 
 ```
 $ gups --dashboard --vmodule=dashboard=5
 $ (cd dashboard/assets && yarn dev)
 ```
 
-To bundle up the final UI into Getrue, run `go generate`:
+To bundle up the final UI into Gups, run `go generate`:
 
 ```
 $ (cd dashboard && go generate)
