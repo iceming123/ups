@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"sync"
 	"time"
 
 	"github.com/iceming123/ups/common"
@@ -154,7 +153,7 @@ type BlockFetcher struct {
 	queue  *prque.Prque                 // Queue containing the import operations (block number sorted)
 	queues map[string]int               // Per peer block counts to prevent memory exhaustion
 	queued map[common.Hash]*blockInject // Set of already queued blocks (to dedupe imports)
-	tmpMu        sync.Mutex
+
 	// Callbacks
 	getBlock       blockRetrievalFn   // Retrieves a block from the local chain
 	verifyHeader   headerVerifierFn   // Checks if a block's headers have a valid proof of work
@@ -630,8 +629,7 @@ func (f *BlockFetcher) rescheduleComplete(complete *time.Timer) {
 // has not yet been seen.
 func (f *BlockFetcher) enqueue(peer string, block *types.Block) {
 	hash := block.Hash()
-	f.tmpMu.Lock()
-	defer f.tmpMu.Unlock()
+
 	// Ensure the peer isn't DOSing us
 	count := f.queues[peer] + 1
 	if count > blockLimit {
@@ -757,8 +755,6 @@ func (f *BlockFetcher) forgetHash(hash common.Hash) {
 // forgetBlock removes all traces of a queued block from the fetcher's internal
 // state.
 func (f *BlockFetcher) forgetBlock(hash common.Hash) {
-	f.tmpMu.Lock()
-	defer f.tmpMu.Unlock()
 	if insert := f.queued[hash]; insert != nil {
 		f.queues[insert.origin]--
 		if f.queues[insert.origin] == 0 {

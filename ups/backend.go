@@ -363,8 +363,6 @@ func (s *Upschain) Start(srvr *p2p.Server) error {
 	s.agent.Start()
 
 	s.election.Start()
-	// Start the networking layer and the light server if requested
-	s.protocolManager.Start(maxPeers)
 	if s.lesServer != nil {
 		s.lesServer.Start(srvr)
 	}
