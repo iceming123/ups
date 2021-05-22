@@ -381,12 +381,10 @@ func (g *Genesis) configOrDefault(ghash common.Hash) *params.ChainConfig {
 		return g.Config
 	case ghash == params.MainnetGenesisHash:
 		return params.MainnetChainConfig
-	case ghash == params.MainnetSnailGenesisHash:
-		return params.MainnetChainConfig
+
 	case ghash == params.TestnetGenesisHash:
 		return params.TestnetChainConfig
-	case ghash == params.TestnetSnailGenesisHash:
-		return params.TestnetChainConfig
+
 	default:
 		return params.AllMinervaProtocolChanges
 	}
@@ -434,10 +432,10 @@ func DefaultDevGenesisBlock() *Genesis {
 		Difficulty: big.NewInt(20000),
 		//Alloc:      decodePrealloc(mainnetAllocData),
 		Alloc: map[common.Address]types.GenesisAccount{
-			common.HexToAddress("0x3e3429F72450A39CE227026E8DdeF331E9973E4d"): {Balance: i},
-			common.HexToAddress("0xf353ab1417177F766497bF716D7aAd4ECd5f36C8"): {Balance: i},
-			common.HexToAddress("0x8fF345746C3d3435a105538E4c024Af5FE700598"): {Balance: i},
-			common.HexToAddress("0xf0C8898B2016Afa0Ec5912413ebe403930446779"): {Balance: i},
+			common.HexToAddress("0x8dd832d7db11f4a7cae758641d84ad5af6e4833f"): {Balance: i},
+			common.HexToAddress("0x3672631830709b0f7ebefd7c24d437867b638979"): {Balance: i},
+			common.HexToAddress("0x26a187c6d2e77fb339fc6d721f67a9495b98a81a"): {Balance: i},
+			common.HexToAddress("0x228f78fc398db973b96ed666c92e78753b9466eb"): {Balance: i},
 		},
 		Committee: []*types.CommitteeMember{
 			{Coinbase: common.HexToAddress("0x3e3429F72450A39CE227026E8DdeF331E9973E4d"), Publickey: key1},

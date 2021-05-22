@@ -60,7 +60,7 @@ var AppHelpFlagGroups = []flagGroup{
 			utils.DevnetFlag,
 			utils.SyncModeFlag,
 			utils.GCModeFlag,
-			utils.EtrueStatsURLFlag,
+			utils.UpsStatsURLFlag,
 			utils.IdentityFlag,
 			utils.LightServFlag,
 			utils.LightKDFFlag,

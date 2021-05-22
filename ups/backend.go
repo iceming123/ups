@@ -20,36 +20,36 @@ package ups
 import (
 	"errors"
 	"fmt"
-	"github.com/iceming123/ups/consensus/tbft"
-	config "github.com/iceming123/ups/params"
-	"math/big"
-	"runtime"
-	"strconv"
-	"sync"
-	"sync/atomic"
 	"github.com/iceming123/ups/accounts"
 	"github.com/iceming123/ups/common/hexutil"
 	"github.com/iceming123/ups/consensus"
 	elect "github.com/iceming123/ups/consensus/election"
 	ethash "github.com/iceming123/ups/consensus/minerva"
+	"github.com/iceming123/ups/consensus/tbft"
 	"github.com/iceming123/ups/core"
 	"github.com/iceming123/ups/core/bloombits"
 	"github.com/iceming123/ups/core/rawdb"
 	"github.com/iceming123/ups/core/types"
 	"github.com/iceming123/ups/core/vm"
 	"github.com/iceming123/ups/crypto"
-	"github.com/iceming123/ups/ups/downloader"
-	"github.com/iceming123/ups/ups/filters"
-	"github.com/iceming123/ups/ups/gasprice"
-	"github.com/iceming123/ups/upsdb"
 	"github.com/iceming123/ups/event"
 	"github.com/iceming123/ups/internal/upsapi"
 	"github.com/iceming123/ups/log"
 	"github.com/iceming123/ups/node"
 	"github.com/iceming123/ups/p2p"
 	"github.com/iceming123/ups/params"
+	config "github.com/iceming123/ups/params"
 	"github.com/iceming123/ups/rlp"
 	"github.com/iceming123/ups/rpc"
+	"github.com/iceming123/ups/ups/downloader"
+	"github.com/iceming123/ups/ups/filters"
+	"github.com/iceming123/ups/ups/gasprice"
+	"github.com/iceming123/ups/upsdb"
+	"math/big"
+	"runtime"
+	"strconv"
+	"sync"
+	"sync/atomic"
 )
 
 type LesServer interface {
@@ -66,9 +66,9 @@ type Upschain struct {
 	// Channel for shutting down the service
 	shutdownChan chan bool // Channel for shutting down the Upschain
 	// Handlers
-	txPool *core.TxPool
-	agent    *PbftAgent
-	election *elect.Election
+	txPool          *core.TxPool
+	agent           *PbftAgent
+	election        *elect.Election
 	blockchain      *core.BlockChain
 	protocolManager *ProtocolManager
 	lesServer       LesServer
@@ -82,8 +82,8 @@ type Upschain struct {
 	bloomRequests chan chan *bloombits.Retrieval // Channel receiving bloom data retrieval requests
 	bloomIndexer  *core.ChainIndexer             // Bloom indexer operating during block imports
 
-	APIBackend *TrueAPIBackend
-	gasPrice  *big.Int
+	APIBackend    *TrueAPIBackend
+	gasPrice      *big.Int
 	networkID     uint64
 	netRPCService *upsapi.PublicNetAPI
 
@@ -129,7 +129,7 @@ func New(ctx *node.ServiceContext, config *Config) (*Upschain, error) {
 		chainConfig:    chainConfig,
 		eventMux:       ctx.EventMux,
 		accountManager: ctx.AccountManager,
-		engine:         CreateConsensusEngine(ctx, &ethash.Config{PowMode:ethash.ModeNormal}, chainDb),
+		engine:         CreateConsensusEngine(ctx, &ethash.Config{PowMode: ethash.ModeNormal}, chainDb),
 		shutdownChan:   make(chan bool),
 		networkID:      config.NetworkId,
 		gasPrice:       config.GasPrice,
@@ -179,9 +179,9 @@ func New(ctx *node.ServiceContext, config *Config) (*Upschain, error) {
 	ups.agent = NewPbftAgent(ups, ups.chainConfig, ups.engine, ups.election, config.MinerGasFloor, config.MinerGasCeil)
 
 	if ups.protocolManager, err = NewProtocolManager(
-		ups.chainConfig,checkpoint, config.SyncMode, config.NetworkId,
+		ups.chainConfig, checkpoint, config.SyncMode, config.NetworkId,
 		ups.eventMux, ups.txPool, ups.engine,
-		ups.blockchain, chainDb, ups.agent,cacheLimit,config.Whitelist); err != nil {
+		ups.blockchain, chainDb, ups.agent, cacheLimit, config.Whitelist); err != nil {
 		return nil, err
 	}
 
@@ -223,9 +223,8 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (upsdb.Data
 }
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an Upschain service
-func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config,db upsdb.Database) consensus.Engine {
+func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config, db upsdb.Database) consensus.Engine {
 	// If proof-of-authority is requested, set it up
-	// snail chain not need clique
 	/*
 		if chainConfig.Clique != nil {
 			return clique.New(chainConfig.Clique, db)
@@ -314,11 +313,11 @@ func (s *Upschain) PbftAgent() *PbftAgent             { return s.agent }
 func (s *Upschain) AccountManager() *accounts.Manager { return s.accountManager }
 func (s *Upschain) BlockChain() *core.BlockChain      { return s.blockchain }
 func (s *Upschain) Config() *Config                   { return s.config }
-func (s *Upschain) TxPool() *core.TxPool                    { return s.txPool }
+func (s *Upschain) TxPool() *core.TxPool              { return s.txPool }
 
 func (s *Upschain) EventMux() *event.TypeMux           { return s.eventMux }
 func (s *Upschain) Engine() consensus.Engine           { return s.engine }
-func (s *Upschain) ChainDb() upsdb.Database          { return s.chainDb }
+func (s *Upschain) ChainDb() upsdb.Database            { return s.chainDb }
 func (s *Upschain) IsListening() bool                  { return true } // Always listening
 func (s *Upschain) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
 func (s *Upschain) NetVersion() uint64                 { return s.networkID }

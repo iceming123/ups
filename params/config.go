@@ -30,11 +30,9 @@ import (
 
 // Genesis hashes to enforce below configs on.
 var (
-	MainnetGenesisHash      = common.HexToHash("0x0c6e644fcbd396f7b235ecef44551c45afd9274e87cd77ec6e9778cf8bfb46fc")
-	MainnetSnailGenesisHash = common.HexToHash("0xf82fd9c0c8a53474c9e40e4f1c0583a94609eaf88dae01a5496da459398485c6")
+	MainnetGenesisHash = common.HexToHash("0x0c6e644fcbd396f7b235ecef44551c45afd9274e87cd77ec6e9778cf8bfb46fc")
 
-	TestnetGenesisHash      = common.HexToHash("0x4b82a68ebbf32f2e816754f2b50eda0ae2c0a71dd5f4e0ecd93ccbfb7dba00b8")
-	TestnetSnailGenesisHash = common.HexToHash("0x4ab1748c057b744de202d6ebea64e8d3a0b2ec4c19abbc59e8639967b14b7c96")
+	TestnetGenesisHash = common.HexToHash("0x4b82a68ebbf32f2e816754f2b50eda0ae2c0a71dd5f4e0ecd93ccbfb7dba00b8")
 
 	DevnetSnailGenesisHash = common.HexToHash("0xdf819f11beead767f91a6c05d74e5f902fc2988e9039a969a023bc75e467cdeb")
 )
@@ -42,9 +40,7 @@ var (
 // TrustedCheckpoints associates each known checkpoint with the genesis hash of
 // the chain it belongs to.
 var TrustedCheckpoints = map[common.Hash]*TrustedCheckpoint{
-	MainnetSnailGenesisHash: MainnetTrustedCheckpoint,
-	TestnetSnailGenesisHash: TestnetTrustedCheckpoint,
-	DevnetSnailGenesisHash:  DevnetTrustedCheckpoint,
+	DevnetSnailGenesisHash: DevnetTrustedCheckpoint,
 }
 
 var (
@@ -212,8 +208,8 @@ type ChainConfig struct {
 }
 
 type BlockConfig struct {
-	FastNumber  *big.Int
-	CID         *big.Int
+	FastNumber *big.Int
+	CID        *big.Int
 }
 
 func (c *ChainConfig) UnmarshalJSON(input []byte) error {

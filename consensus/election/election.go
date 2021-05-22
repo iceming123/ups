@@ -37,15 +37,14 @@ import (
 )
 
 const (
-	snailchainHeadSize  = 64
 	committeeCacheLimit = 256
 )
 
 type ElectMode uint
 
 const (
-	// ElectModeEtrue for ups
-	ElectModeEtrue = iota
+	// ElectModeUps for ups
+	ElectModeUps = iota
 	// ElectModeFake for Test purpose
 	ElectModeFake
 )
@@ -62,12 +61,12 @@ var (
 )
 
 type committee struct {
-	id                  *big.Int
-	beginFastNumber     *big.Int // the first fast block proposed by this committee
-	endFastNumber       *big.Int // the lastproposed by this committee
-	members             types.CommitteeMembers
-	backupMembers       types.CommitteeMembers
-	switches            []*big.Int // blocknumbers whose block include switchinfos
+	id              *big.Int
+	beginFastNumber *big.Int // the first fast block proposed by this committee
+	endFastNumber   *big.Int // the lastproposed by this committee
+	members         types.CommitteeMembers
+	backupMembers   types.CommitteeMembers
+	switches        []*big.Int // blocknumbers whose block include switchinfos
 }
 
 // Members returns dump of the committee members
@@ -127,8 +126,8 @@ type Election struct {
 	electionFeed event.Feed
 	scope        event.SubscriptionScope
 
-	fastchain  BlockChain
-	engine consensus.Engine
+	fastchain BlockChain
+	engine    consensus.Engine
 }
 
 type BlockChain interface {
@@ -141,7 +140,6 @@ type BlockChain interface {
 	StateAt(root common.Hash) (*state.StateDB, error)
 }
 
-
 type Config interface {
 	GetNodeType() bool
 }
@@ -150,10 +148,10 @@ type Config interface {
 func NewElection(chainConfig *params.ChainConfig, fastBlockChain BlockChain, config Config) *Election {
 	// init
 	election := &Election{
-		chainConfig:       chainConfig,
-		fastchain:         fastBlockChain,
-		singleNode:        config.GetNodeType(),
-		electionMode:      ElectModeEtrue,
+		chainConfig:  chainConfig,
+		fastchain:    fastBlockChain,
+		singleNode:   config.GetNodeType(),
+		electionMode: ElectModeUps,
 	}
 
 	// get genesis committee
@@ -188,7 +186,7 @@ func NewLightElection(fastBlockChain BlockChain) *Election {
 	// init
 	election := &Election{
 		fastchain:    fastBlockChain,
-		electionMode: ElectModeEtrue,
+		electionMode: ElectModeUps,
 	}
 	return election
 }
@@ -211,18 +209,18 @@ func NewFakeElection() *Election {
 
 	// Backup members are empty in FakeMode Election
 	elected := &committee{
-		id:                  new(big.Int).Set(common.Big0),
-		beginFastNumber:     new(big.Int).Set(common.Big1),
-		endFastNumber:       new(big.Int).Set(common.Big0),
-		members:             members,
+		id:              new(big.Int).Set(common.Big0),
+		beginFastNumber: new(big.Int).Set(common.Big1),
+		endFastNumber:   new(big.Int).Set(common.Big0),
+		members:         members,
 	}
 
 	election := &Election{
-		fastchain:         nil,
-		singleNode:        false,
-		committee:         elected,
-		electionMode:      ElectModeFake,
-		testPrivateKeys:   priKeys,
+		fastchain:       nil,
+		singleNode:      false,
+		committee:       elected,
+		electionMode:    ElectModeFake,
+		testPrivateKeys: priKeys,
 	}
 	return election
 }
@@ -473,6 +471,7 @@ func (e *Election) Start() error {
 	log.Info("Election enable stake at launch")
 	return nil
 }
+
 // SubscribeElectionEvent adds a channel to feed on committee change event
 func (e *Election) SubscribeElectionEvent(ch chan<- types.ElectionEvent) event.Subscription {
 	return e.scope.Track(e.electionFeed.Subscribe(ch))

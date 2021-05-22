@@ -31,13 +31,13 @@ import (
 
 	"github.com/iceming123/ups/common"
 	"github.com/iceming123/ups/common/mclock"
-	"github.com/iceming123/ups/log"
 	"github.com/iceming123/ups/consensus"
 	"github.com/iceming123/ups/core/types"
-	"github.com/iceming123/ups/ups"
 	"github.com/iceming123/ups/event"
+	"github.com/iceming123/ups/log"
 	"github.com/iceming123/ups/p2p"
 	"github.com/iceming123/ups/rpc"
+	"github.com/iceming123/ups/ups"
 	"golang.org/x/net/websocket"
 )
 
@@ -67,38 +67,38 @@ type blockChain interface {
 // chain statistics up to a monitoring server.
 type Service struct {
 	server *p2p.Server      // Peer-to-peer server to retrieve networking infos
-	ups  *ups.Upschain // Full Upschain service if monitoring a full node
+	ups    *ups.Upschain    // Full Upschain service if monitoring a full node
 	engine consensus.Engine // Consensus engine to retrieve variadic block fields
 
 	node string // Name of the node to display on the monitoring page
 	pass string // Password to authorize access to the monitoring page
 	host string // Remote address of the monitoring service
 
-	pongCh      chan struct{} // Pong notifications are fed into this channel
-	histCh      chan []uint64 // History request block numbers are fed into this channel
+	pongCh chan struct{} // Pong notifications are fed into this channel
+	histCh chan []uint64 // History request block numbers are fed into this channel
 }
 
 // New returns a monitoring service ready for stats reporting.
-func New(url string, etrueServ *ups.Upschain) (*Service, error) {
+func New(url string, upsServ *ups.Upschain) (*Service, error) {
 	// Parse the netstats connection url
 	re := regexp.MustCompile("([^:@]*)(:([^@]*))?@(.+)")
 	parts := re.FindStringSubmatch(url)
 	if len(parts) != 5 {
 		return nil, fmt.Errorf("invalid netstats url: \"%s\", should be nodename:secret@host:port", url)
 	}
-	if etrueServ == nil {
+	if upsServ == nil {
 		return nil, fmt.Errorf("invalid server")
 	}
 	// Assemble and return the stats service
-	engine := etrueServ.Engine()
+	engine := upsServ.Engine()
 	return &Service{
-		ups:       etrueServ,
-		engine:      engine,
-		node:        parts[1],
-		pass:        parts[3],
-		host:        parts[4],
-		pongCh:      make(chan struct{}),
-		histCh:      make(chan []uint64, 1),
+		ups:    upsServ,
+		engine: engine,
+		node:   parts[1],
+		pass:   parts[3],
+		host:   parts[4],
+		pongCh: make(chan struct{}),
+		histCh: make(chan []uint64, 1),
 	}, nil
 }
 
@@ -145,9 +145,9 @@ func (s *Service) loop() {
 
 	// Start a goroutine that exhausts the subsciptions to avoid events piling up
 	var (
-		quitCh      = make(chan struct{})
-		headCh      = make(chan *types.Block, 1)
-		txCh        = make(chan struct{}, 1)
+		quitCh = make(chan struct{})
+		headCh = make(chan *types.Block, 1)
+		txCh   = make(chan struct{}, 1)
 	)
 	go func() {
 		var lastTx mclock.AbsTime
@@ -317,7 +317,7 @@ func handleHistCh(msg map[string][]interface{}, s *Service, command string) stri
 		if command == "history" {
 			s.histCh <- nil
 		}
-		return "continue" // Etruestats sometime sends invalid history requests, ignore those
+		return "continue" // Upsstats sometime sends invalid history requests, ignore those
 	}
 	list, ok := request["list"].([]interface{})
 	if !ok {
@@ -340,7 +340,7 @@ func handleHistCh(msg map[string][]interface{}, s *Service, command string) stri
 			return "continue"
 		default:
 		}
-	} 
+	}
 	return ""
 }
 
@@ -484,6 +484,7 @@ type blockStats struct {
 type txStats struct {
 	Hash common.Hash `json:"hash"`
 }
+
 // reportBlock retrieves the current chain head and reports it to the stats server.
 func (s *Service) reportBlock(conn *websocket.Conn, block *types.Block) error {
 	// Gather the block details from the header or block chain
@@ -590,6 +591,7 @@ func (s *Service) reportHistory(conn *websocket.Conn, list []uint64) error {
 	}
 	return websocket.JSON.Send(conn, report)
 }
+
 // pendStats is the information to report about pending transactions.
 type pendStats struct {
 	Pending int `json:"pending"`

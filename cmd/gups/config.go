@@ -11,13 +11,13 @@ import (
 
 	"gopkg.in/urfave/cli.v1"
 
-	"github.com/naoina/toml"
 	"github.com/iceming123/ups/cmd/utils"
 	"github.com/iceming123/ups/crypto"
 	"github.com/iceming123/ups/dashboard"
 	"github.com/iceming123/ups/node"
 	"github.com/iceming123/ups/params"
 	"github.com/iceming123/ups/ups"
+	"github.com/naoina/toml"
 )
 
 var (
@@ -54,15 +54,15 @@ var tomlSettings = toml.Config{
 	},
 }
 
-type etruestatsConfig struct {
+type upsstatsConfig struct {
 	URL string `toml:",omitempty"`
 }
 
 type gethConfig struct {
-	Ups        ups.Config
-	Node       node.Config
-	Etruestats etruestatsConfig
-	Dashboard  dashboard.Config
+	Ups       ups.Config
+	Node      node.Config
+	Upsstats  upsstatsConfig
+	Dashboard dashboard.Config
 }
 
 func loadConfig(file string, cfg *gethConfig) error {
@@ -98,7 +98,7 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 		Dashboard: dashboard.DefaultConfig,
 	}
 	if ctx.GlobalBool(utils.SingleNodeFlag.Name) {
-		// set etrueconfig
+		// set upsconfig
 		prikey, _ := crypto.HexToECDSA("c1581e25937d9ab91421a3e1a2667c85b0397c75a195e643109938e987acecfc")
 		cfg.Ups.PrivateKey = prikey
 		cfg.Ups.CommitteeKey = crypto.FromECDSA(prikey)
@@ -125,8 +125,8 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 		utils.Fatalf("Failed to create the protocol stack: %v", err)
 	}
 	utils.SetTruechainConfig(ctx, stack, &cfg.Ups)
-	if ctx.GlobalIsSet(utils.EtrueStatsURLFlag.Name) {
-		cfg.Etruestats.URL = ctx.GlobalString(utils.EtrueStatsURLFlag.Name)
+	if ctx.GlobalIsSet(utils.UpsStatsURLFlag.Name) {
+		cfg.Upsstats.URL = ctx.GlobalString(utils.UpsStatsURLFlag.Name)
 	}
 
 	utils.SetDashboardConfig(ctx, &cfg.Dashboard)
@@ -137,15 +137,15 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 func makeFullNode(ctx *cli.Context) *node.Node {
 	stack, cfg := makeConfigNode(ctx)
 
-	utils.RegisterEtrueService(stack, &cfg.Ups)
+	utils.RegisterUpsService(stack, &cfg.Ups)
 
 	if ctx.GlobalBool(utils.DashboardEnabledFlag.Name) {
 		utils.RegisterDashboardService(stack, &cfg.Dashboard, gitCommit)
 	}
 
 	// Add the Upschain Stats daemon if requested.
-	if cfg.Etruestats.URL != "" {
-		utils.RegisterEtrueStatsService(stack, cfg.Etruestats.URL)
+	if cfg.Upsstats.URL != "" {
+		utils.RegisterUpsStatsService(stack, cfg.Upsstats.URL)
 	}
 	return stack
 }

@@ -1828,7 +1828,7 @@ require = (function e(t, n, r) {
             'milli',
             'ups',
             'grand',
-            'Metrue',
+            'Mups',
             'Gtrue',
             'Ttrue',
             'Ptrue',
@@ -2927,7 +2927,7 @@ require = (function e(t, n, r) {
             contract.abi.filter(function (json) {
                 return json.type === 'function';
             }).map(function (json) {
-                return new SolidityFunction(contract._etrue, json, contract.address);
+                return new SolidityFunction(contract._ups, json, contract.address);
             }).forEach(function (f) {
                 f.attachToContract(contract);
             });
@@ -2945,11 +2945,11 @@ require = (function e(t, n, r) {
                 return json.type === 'event';
             });
 
-            var All = new AllEvents(contract._etrue._requestManager, events, contract.address);
+            var All = new AllEvents(contract._ups._requestManager, events, contract.address);
             All.attachToContract(contract);
 
             events.map(function (json) {
-                return new SolidityEvent(contract._etrue._requestManager, json, contract.address);
+                return new SolidityEvent(contract._ups._requestManager, json, contract.address);
             }).forEach(function (e) {
                 e.attachToContract(contract);
             });
@@ -2969,7 +2969,7 @@ require = (function e(t, n, r) {
                 callbackFired = false;
 
             // wait for receipt
-            var filter = contract._etrue.filter('latest', function (e) {
+            var filter = contract._ups.filter('latest', function (e) {
                 if (!e && !callbackFired) {
                     count++;
 
@@ -2988,10 +2988,10 @@ require = (function e(t, n, r) {
 
                     } else {
 
-                        contract._etrue.getTransactionReceipt(contract.transactionHash, function (e, receipt) {
+                        contract._ups.getTransactionReceipt(contract.transactionHash, function (e, receipt) {
                             if (receipt && !callbackFired) {
 
-                                contract._etrue.getCode(receipt.contractAddress, function (e, code) {
+                                contract._ups.getCode(receipt.contractAddress, function (e, code) {
                                     /*jshint maxcomplexity: 6 */
 
                                     if (callbackFired || !code)
@@ -3173,7 +3173,7 @@ require = (function e(t, n, r) {
          * @param {Address} contract address
          */
         var Contract = function (ups, abi, address) {
-            this._etrue = ups;
+            this._ups = ups;
             this.transactionHash = null;
             this.address = address;
             this.abi = abi;
@@ -4114,7 +4114,7 @@ require = (function e(t, n, r) {
          * This prototype should be used to call/sendTransaction to solidity functions
          */
         var SolidityFunction = function (ups, json, address) {
-            this._etrue = ups;
+            this._ups = ups;
             this._inputTypes = json.inputs.map(function (i) {
                 return i.type;
             });
@@ -4218,12 +4218,12 @@ require = (function e(t, n, r) {
 
 
             if (!callback) {
-                var output = this._etrue.call(payload, defaultBlock);
+                var output = this._ups.call(payload, defaultBlock);
                 return this.unpackOutput(output);
             }
 
             var self = this;
-            this._etrue.call(payload, defaultBlock, function (error, output) {
+            this._ups.call(payload, defaultBlock, function (error, output) {
                 if (error) return callback(error, null);
 
                 var unpacked = null;
@@ -4254,10 +4254,10 @@ require = (function e(t, n, r) {
             }
 
             if (!callback) {
-                return this._etrue.sendTransaction(payload);
+                return this._ups.sendTransaction(payload);
             }
 
-            this._etrue.sendTransaction(payload, callback);
+            this._ups.sendTransaction(payload, callback);
         };
 
         /**
@@ -4271,10 +4271,10 @@ require = (function e(t, n, r) {
             var payload = this.toPayload(args);
 
             if (!callback) {
-                return this._etrue.estimateGas(payload);
+                return this._ups.estimateGas(payload);
             }
 
-            this._etrue.estimateGas(payload, callback);
+            this._ups.estimateGas(payload, callback);
         };
 
         /**

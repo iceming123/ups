@@ -157,12 +157,8 @@ func queryRewardImpawn(ctx *cli.Context) error {
 	PrintBalance(conn, from)
 
 	start := false
-	snailNumber := uint64(0)
-	if ctx.GlobalIsSet(SnailNumberFlag.Name) {
-		snailNumber = ctx.GlobalUint64(SnailNumberFlag.Name)
-		start = true
-	}
-	queryRewardInfo(conn, snailNumber, start)
+
+	queryRewardInfo(conn, start)
 	return nil
 }
 

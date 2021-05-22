@@ -389,10 +389,9 @@ func loadSigningKey(keyfile string) common.Address {
 	return from
 }
 
-func queryRewardInfo(conn *upsclient.Client, number uint64, start bool) {
-	queryReward := number
+func queryRewardInfo(conn *upsclient.Client, start bool) {
 	var crc map[string]interface{}
-	crc, err = conn.GetChainRewardContent(context.Background(), from, new(big.Int).SetUint64(queryReward))
+	crc, err = conn.GetChainRewardContent(context.Background(), from, new(big.Int).SetUint64(uint64(0)))
 	if err != nil {
 		printError("get chain reward content error", err)
 	}
