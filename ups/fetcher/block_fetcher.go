@@ -465,7 +465,7 @@ func (f *BlockFetcher) loop() {
 
 			// Split the batch of headers into unknown ones (to return to the caller),
 			// known incomplete ones (requiring body retrievals) and completed blocks.
-			unknown, incomplete, complete := []*types.Header{}, []*blockAnnounce{}, []*types.Block{}
+			unknown, incomplete := []*types.Header{}, []*blockAnnounce{}
 			for _, header := range task.headers {
 				hash := header.Hash()
 
@@ -483,17 +483,6 @@ func (f *BlockFetcher) loop() {
 						announce.header = header
 						announce.time = task.time
 
-						// If the block is empty (header only), short circuit into the final import queue
-						if header.TxHash == types.DeriveSha(types.Transactions{}) {
-							log.Trace("Block empty, skipping body retrieval", "peer", announce.origin, "number", header.Number, "hash", header.Hash())
-
-							block := types.NewBlockWithHeader(header)
-							block.ReceivedAt = task.time
-
-							complete = append(complete, block)
-							f.completing[hash] = announce
-							continue
-						}
 						// Otherwise add to the list of blocks needing completion
 						incomplete = append(incomplete, announce)
 					} else {
@@ -520,13 +509,6 @@ func (f *BlockFetcher) loop() {
 				f.fetched[hash] = append(f.fetched[hash], announce)
 				if len(f.fetched) == 1 {
 					f.rescheduleComplete(completeTimer)
-				}
-			}
-
-			// Schedule the header-only blocks for import
-			for _, block := range complete {
-				if announce := f.completing[block.Hash()]; announce != nil {
-					f.enqueue(announce.origin, block)
 				}
 			}
 
